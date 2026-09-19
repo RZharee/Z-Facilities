@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z-Facilities Medical Device Database</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#17202a;background:#f4f6f8}*{box-sizing:border-box}body{margin:0}.top{background:#17365d;color:white;padding:20px 5vw}.top h1{margin:0 0 5px}.wrap{max-width:1150px;margin:auto;padding:24px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}input,select,button{font:inherit;padding:10px 12px;border:1px solid #bcc5cf;border-radius:7px}input{flex:1;min-width:250px}button{cursor:pointer;background:white}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.card{background:white;border:1px solid #dce2e8;border-radius:10px;padding:17px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.06)}.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.12)}.asset{font-weight:bold;color:#17365d}.status{display:inline-block;margin-top:8px;padding:4px 9px;border-radius:20px;background:#e9eef4}.detail{display:none;background:white;border-radius:10px;padding:20px;margin-top:22px;border:1px solid #dce2e8}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.field{background:#f7f9fb;padding:10px;border-radius:7px}.label{font-size:12px;color:#687582;text-transform:uppercase}.value{font-weight:600;margin-top:4px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{text-align:left;border-bottom:1px solid #e1e5ea;padding:10px}th{background:#f2f5f8}.muted{color:#65717d}.empty{padding:30px;text-align:center;background:white;border-radius:10px}.section-title{margin:24px 0 8px}.close{float:right}.count{margin-bottom:12px;color:#596675}@media(max-width:650px){th:nth-child(3),td:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<header class="top"><h1>Z-Facilities</h1><div>Sample Medical Device Database • 5 equipment records</div></header>
+<main class="wrap">
+  <div class="toolbar">
+    <input id="search" placeholder="Search asset, serial, equipment, manufacturer, model, department...">
+    <select id="statusFilter"><option value="">All statuses</option><option>In Service</option><option>Out for Repair</option></select>
+    <button id="clear">Clear</button>
+  </div>
+  <div id="count" class="count"></div>
+  <section id="cards" class="cards"></section>
+  <section id="detail" class="detail"></section>
+</main>
+<script>
+const devices=[
+{asset:'C224561',equipment:'ECG Machine',manufacturer:'GE Healthcare',model:'MAC 5500 HD',serial:'ECG00125',department:'Cardiology',status:'In Service',history:[['WR001','Preventive Maintenance','2026-01-15','Passed inspection and electrical safety test.'],['WR006','Corrective','2026-05-03','Replaced worn patient cable.']]},
+{asset:'C224562',equipment:'Defibrillator',manufacturer:'Stryker',model:'LIFEPAK 15',serial:'LP150234',department:'Emergency',status:'In Service',history:[['WR002','Preventive Maintenance','2026-02-10','Energy delivery and synchronized cardioversion verified.'],['WR007','Battery','2026-06-18','Battery capacity check completed.']]},
+{asset:'C224563',equipment:'Patient Monitor',manufacturer:'Philips',model:'IntelliVue MX450',serial:'MX450871',department:'ICU',status:'In Service',history:[['WR003','Preventive Maintenance','2026-03-05','ECG, SpO₂ and NIBP functions verified.']]},
+{asset:'C224564',equipment:'Infusion Pump',manufacturer:'BD',model:'Alaris LVP',serial:'ALP45210',department:'Medical Unit',status:'Out for Repair',history:[['WR004','Corrective','2026-08-22','Reported intermittent occlusion alarm; device removed from service.']]},
+{asset:'C224565',equipment:'Pulse Oximeter',manufacturer:'Medtronic',model:'Nellcor N-595',serial:'N5953392',department:'Respiratory',status:'In Service',history:[['WR005','Preventive Maintenance','2026-04-12','SpO₂ simulator test completed within tolerance.']]}
+];
+const cards=document.getElementById('cards'),detail=document.getElementById('detail'),search=document.getElementById('search'),filter=document.getElementById('statusFilter'),count=document.getElementById('count');
+function render(){const q=search.value.trim().toLowerCase();const list=devices.filter(d=>(!filter.value||d.status===filter.value)&&Object.values(d).slice(0,7).join(' ').toLowerCase().includes(q));count.textContent=`Showing ${list.length} of ${devices.length} devices`;cards.innerHTML=list.length?list.map(d=>`<article class="card" onclick="showDevice('${d.asset}')"><div class="asset">${d.asset}</div><h3>${d.equipment}</h3><div>${d.manufacturer} • ${d.model}</div><p class="muted">Serial: ${d.serial}<br>Department: ${d.department}</p><span class="status">${d.status}</span></article>`).join(''):'<div class="empty">No matching equipment found.</div>';}
+function showDevice(asset){const d=devices.find(x=>x.asset===asset);detail.style.display='block';detail.innerHTML=`<button class="close" onclick="document.getElementById('detail').style.display='none'">Close</button><h2>${d.asset} — ${d.equipment}</h2><div class="grid">${[['Manufacturer',d.manufacturer],['Model',d.model],['Serial Number',d.serial],['Department',d.department],['Status',d.status]].map(x=>`<div class="field"><div class="label">${x[0]}</div><div class="value">${x[1]}</div></div>`).join('')}</div><h3 class="section-title">Service History / Work Orders</h3><table><thead><tr><th>WO #</th><th>Type</th><th>Date</th><th>Notes</th></tr></thead><tbody>${d.history.map(h=>`<tr><td>${h[0]}</td><td>${h[1]}</td><td>${h[2]}</td><td>${h[3]}</td></tr>`).join('')}</tbody></table>`;detail.scrollIntoView({behavior:'smooth',block:'start'});}
+search.addEventListener('input',render);filter.addEventListener('change',render);document.getElementById('clear').onclick=()=>{search.value='';filter.value='';detail.style.display='none';render()};render();
+</script>
+</body>
+</html>
