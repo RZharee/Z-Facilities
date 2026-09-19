@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block content %}
+<a class="back" href="{{ url_for('home') }}">← Equipment Search</a>
+<div class="card">
+  <h1>{{ device.manufacturer }} {{ device.model }}</h1>
+  <div class="grid">
+    <div><div class="label">Asset #</div><div class="value">{{ device.asset }}</div></div>
+    <div><div class="label">Serial #</div><div class="value">{{ device.serial }}</div></div>
+    <div><div class="label">Category</div><div class="value">{{ device.category }}</div></div>
+    <div><div class="label">Department</div><div class="value">{{ device.department }}</div></div>
+    <div><div class="label">Status</div><div class="value"><span class="badge">{{ device.status }}</span></div></div>
+  </div>
+  <div class="actions"><a class="btn" href="{{ url_for('create_workorder',asset=device.asset) }}">Create Work Order</a></div>
+</div>
+<div class="card">
+  <h2>Service History</h2>
+  {% if history %}
+  <table><thead><tr><th>WO #</th><th>Date</th><th>Type</th><th>Description</th><th>Biomed</th><th>Status</th></tr></thead>
+  <tbody>{% for w in history %}<tr><td>{{w.wo}}</td><td>{{w.date}}</td><td>{{w.type}}</td><td>{{w.description}}</td><td>{{w.biomed}}</td><td>{{w.status}}</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p>No service history for this equipment.</p>{% endif %}
+</div>
+{% endblock %}

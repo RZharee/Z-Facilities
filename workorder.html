@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block content %}
+<a class="back" href="{{ url_for('device',asset=device.asset) }}">← Equipment Record</a>
+<div class="card">
+<h1>Create Work Order</h1>
+<p><strong>{{ next_wo }}</strong> · {{ device.asset }} · {{ device.manufacturer }} {{ device.model }}</p>
+<form method="post">
+<div class="grid">
+ <div class="field"><label class="label">Service Type</label><select name="type"><option value="PM">PM - Preventive Maintenance</option><option value="DM">DM - Demand Maintenance</option></select></div>
+ <div class="field"><label class="label">Date</label><input type="date" name="date" value="{{ today }}"></div>
+</div>
+<div class="field"><label class="label">Biomed</label><input name="biomed" required></div>
+<div class="field"><label class="label">Problem / Description</label><textarea name="description" required></textarea></div>
+<div class="field"><label class="label">Work Performed</label><textarea name="work_performed"></textarea></div>
+<div class="field"><label class="label">Status</label><select name="status"><option>Open</option><option>Closed</option><option>Waiting for Parts</option></select></div>
+<button type="submit">Save Work Order</button>
+</form></div>
+{% endblock %}
